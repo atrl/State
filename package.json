@@ -1,0 +1,33 @@
+{
+    "name": "jsfsm",
+    "version": "0.0.1",
+    "description": "JavaScript based finite-state machine",
+    "keywords": [
+        finite",
+        "machine",
+        "state"",
+        "fsm"
+    ],
+    "author": "atrlzhuang <i@atrl.me>",
+    "engines": {
+        "node": ">= 0.8.0"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-qunit": "*",
+        "grunt-contrib-connect": "*"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/atrl/jsfsm.git"
+    },
+    "main": "./src/fsm.js",
+    "bugs": {
+        "url": "https://github.com/atrl/jsfsm/issues"
+    },
+    "directories": {
+        "example": "examples"
+    },
+    "license": "MIT"
+}

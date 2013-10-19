@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>有限状态机</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1, maximum-scale=1, user-scalable=no"
+          media="(device-height: 568px)"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script src="../lib/seajs/sea.js"></script>
+</head>
+<body>
+
+<p>
+    状态历史:<span id="statusHistory"></span>
+</p>
+
+<input type="button" value="start" id="btnStart">
+<input type="button" value="pause" id="btnPause">
+<input type="button" value="stop" id="btnStop">
+<input type="button" value="quit" id="btnQuit">
+<br>
+<input type="button" value="reset" id="btnReset">
+
+
+<pre>状态介绍：
+1 状态机本身作为一个状态
+2 reset状态 直属状态机的原子状态
+3 normal状态 直属状态机的复合状态
+4 running,pause,stop状态，属于normal状态的原子状态
+5 final状态 属于状态机的原子状态
+</pre>
+
+<pre>转换介绍：
+1 reset状态可以转入running状态(点击start按钮)
+2 running状态可以转入pause及stop状态 (pause或stop按钮)
+3 pause状态可以转入running及stop状态 (resume或stop按钮)
+4 stop状态可以转入running状态 (start按钮)
+5 所有normal的子状态可以直接转入final状态 (quit按钮)
+6 状态机中的任何状态可以转入reset状态 (reset按钮)
+</pre>
+</body>
+<script type="text/javascript">
+    seajs.config({
+        base: '../src/'
+    });
+
+    seajs.use('State', function (State) {
+        function $(id) {
+            return document.getElementById(id);
+        }
+
+        function enter() {
+            var self = this;
+            for (var i in this.transforms) {
+                var s = i.split('.');
+                $(s[0]).event || ($(s[0]).event = {});
+                $(s[0]).addEventListener(s[1], $(s[0]).event[i] = function (i) {
+                    return function () {
+                        self.emit(i);
+                    }
+                }(i))
+            }
+            statusHistory.innerHTML += '->enter ' + this.name;
+        }
+
+        function leave() {
+            var self = this;
+            for (var i in this.transforms) {
+                var s = i.split('.');
+                $(s[0]).removeEventListener(s[1], $(s[0]).event[i])
+            }
+            statusHistory.innerHTML += '->leave ' + this.name;
+        }
+
+        var statusHistory = $('statusHistory');
+
+        //base create
+        var machine = State({
+            states: {
+                reset: {
+                    transforms: {
+                        'btnStart.click': 'normal.running'
+                    },
+                    enter: enter,
+                    leave: leave
+                },
+                'normal': {
+                    states: {
+                        /*
+                        'running': {
+                            transforms: {
+                                'btnStop.click': 'normal.stop',
+                                'btnPause.click': 'normal.pause'
+                            },
+                            enter: enter,
+                            leave: leave
+                        },
+                        'pause': {
+                            transforms: {
+                                'btnPause.click': 'normal.running',
+                                'btnStop.click': 'normal.stop'
+                            },
+                            enter: enter,
+                            leave: leave
+                        },*/
+                        'stop': {
+                            transforms: {
+                                'btnStart.click': 'normal.running'
+                            },
+                            /*enter: enter,*/
+                            leave: leave
+                        }
+                    },
+                    /*,
+                    transforms: {
+                        'btnQuit.click': 'final'
+                    }*/
+                    enter: enter,
+                    leave: leave
+                },
+                'final': {
+                    enter: enter,
+                    leave: leave
+                }
+            },
+            transforms: {
+                'btnReset.click': 'reset'
+            },
+            initState : 'reset',
+            enter: enter,
+            leave: leave
+        });
+
+        //use add state to add children state
+        machine.childs.normal.addState({
+            'running': {
+                transforms: {
+                    'btnStop.click': 'normal.stop',
+                    'btnPause.click': 'normal.pause'
+                },
+                enter: enter,
+                leave: leave
+            }
+        });
+
+        //create a new state
+        var pause = State({
+            name: 'pause',
+            transforms: {
+                'btnPause.click': 'normal.running',
+                'btnStop.click': 'normal.stop'
+            },
+            enter: enter,
+            leave: leave
+        });
+
+        //append to normal state
+        machine.childs.normal.addState(pause);
+
+        //add transform
+        machine.childs.normal.addTransform({
+            'btnQuit.click': 'final'
+        });
+
+        //bind enter event
+        machine.childs.normal.childs.stop.on('enter', enter);
+
+        machine.start();
+    })
+</script>
+</html>
