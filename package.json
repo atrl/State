@@ -1,11 +1,11 @@
 {
-    "name": "jsfsm",
+    "name": "State",
     "version": "0.0.1",
     "description": "JavaScript based finite-state machine",
     "keywords": [
         finite",
-        "machine",
         "state"",
+        "machine",
         "fsm"
     ],
     "author": "atrlzhuang <i@atrl.me>",
@@ -20,11 +20,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/atrl/jsfsm.git"
+        "url": "git://github.com/atrl/State.git"
     },
-    "main": "./src/fsm.js",
+    "main": "./src/State.js",
     "bugs": {
-        "url": "https://github.com/atrl/jsfsm/issues"
+        "url": "https://github.com/atrl/State/issues"
     },
     "directories": {
         "example": "examples"
