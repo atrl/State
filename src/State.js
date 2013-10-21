@@ -260,7 +260,7 @@
         },
 
         stop : function(){
-            this.machine.activeState.emit('exit');
+            this.machine.activeState && this.machine.activeState.emit('exit');
         }
     };
 
