@@ -2,14 +2,14 @@
     if (typeof define == 'function') define(definition);
     else if (typeof module != 'undefined') module.exports = definition(require, module.exports, module);
 })(function (require, exports, module) {
-
+    "use strict";
     var getType = function (obj) {
         var type = Object.prototype.toString.call(obj);
         return type.substring(8, type.length - 1).toLowerCase();
     };
 
     var extend = function (target, source) {
-        for (key in source)
+        for (var key in source)
             target[key] = source[key]
     };
 
@@ -33,12 +33,10 @@
     };
 
 
-    function InvalidStateError(message) {
-
+    var InvalidStateError = function (message) {
         this.name = 'InvalidStateError';
-
         this.message = message;
-    }
+    };
 
     InvalidStateError.prototype = new Error();
     InvalidStateError.prototype.constructor = InvalidStateError;
